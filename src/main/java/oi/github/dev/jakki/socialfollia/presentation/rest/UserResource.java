@@ -33,7 +33,9 @@ public class UserResource {
 
         Set<ConstraintViolation<UserDTO>> violations = validator.validate(dto);
         if (!violations.isEmpty()) {
-            return ResponseError.createFromValidation(violations).withStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
+            return ResponseError
+                    .createFromValidation(violations)
+                    .withStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
         }
 
         User user = mapper.toEntity(dto);
@@ -63,7 +65,7 @@ public class UserResource {
         }
 
         service.deleteById(userOptional.get().getId());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -83,7 +85,7 @@ public class UserResource {
 
         // Não precisa, pois como tem a annotation @Transactional, ele commit tudo ao final do função
 
-        return Response.ok(user).build();
+        return Response.noContent().build();
     }
 
 }
