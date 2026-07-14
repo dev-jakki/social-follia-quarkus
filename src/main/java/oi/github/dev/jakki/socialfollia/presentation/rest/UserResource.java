@@ -2,16 +2,20 @@ package oi.github.dev.jakki.socialfollia.presentation.rest;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import oi.github.dev.jakki.socialfollia.domain.model.User;
 import oi.github.dev.jakki.socialfollia.domain.service.UserService;
+import oi.github.dev.jakki.socialfollia.presentation.rest.dto.ResponseError;
 import oi.github.dev.jakki.socialfollia.presentation.rest.dto.UserDTO;
 import oi.github.dev.jakki.socialfollia.presentation.rest.mapper.UserMapper;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -21,14 +25,25 @@ public class UserResource {
 
     private final UserService service;
     private final UserMapper mapper;
+    private final Validator validator;
 
     @POST
     @Transactional
     public Response create(UserDTO dto) {
+
+        Set<ConstraintViolation<UserDTO>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            return ResponseError.createFromValidation(violations).withStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
+        }
+
         User user = mapper.toEntity(dto);
 
         service.create(user);
-        return Response.ok(user).build();
+
+        return Response
+                .status(Response.Status.CREATED.getStatusCode())
+                .entity(user)
+                .build();
     }
 
     @GET
