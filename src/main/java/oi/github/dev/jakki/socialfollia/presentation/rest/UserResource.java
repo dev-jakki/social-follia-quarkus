@@ -28,16 +28,7 @@ public class UserResource {
     private final Validator validator;
 
     @POST
-    @Transactional
     public Response create(UserDTO dto) {
-
-        Set<ConstraintViolation<UserDTO>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
-            return ResponseError
-                    .createFromValidation(violations)
-                    .withStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
-        }
-
         User user = mapper.toEntity(dto);
 
         service.create(user);
@@ -56,7 +47,6 @@ public class UserResource {
 
     @DELETE
     @Path("{id}")
-    @Transactional
     public Response delete(@PathParam("id") Long id) {
         Optional<User> userOptional = service.findById(id);
 
@@ -70,7 +60,6 @@ public class UserResource {
 
     @PUT
     @Path("{id}")
-    @Transactional
     public Response update(@PathParam("id") Long id, UserDTO dto) {
         Optional<User> userOptional = service.findById(id);
 
