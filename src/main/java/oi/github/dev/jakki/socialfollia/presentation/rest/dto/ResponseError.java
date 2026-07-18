@@ -11,11 +11,18 @@ public record ResponseError(String message, List<FieldError> errors) {
 
     public static final int UNPROCESSABLE_ENTITY_STATUS = 422;
 
-    // Ajustado para aceitar de forma limpa as violações com o curinga <?> que o Hibernate lança
     public static ResponseError createFromValidation(Set<ConstraintViolation<?>> violations) {
         List<FieldError> erros = violations
                 .stream()
-                .map(cv -> new FieldError(cv.getPropertyPath().toString(), cv.getMessage()))
+                .map(cv -> {
+                    String campoNome = "";
+
+                    for (jakarta.validation.Path.Node node : cv.getPropertyPath()) {
+                        campoNome = node.getName();
+                    }
+
+                    return new FieldError(campoNome, cv.getMessage());
+                })
                 .collect(Collectors.toList());
 
         String message = "Validation failed";

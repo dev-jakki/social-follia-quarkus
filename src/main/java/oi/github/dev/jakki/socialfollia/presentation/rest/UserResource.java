@@ -1,21 +1,17 @@
 package oi.github.dev.jakki.socialfollia.presentation.rest;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import oi.github.dev.jakki.socialfollia.domain.model.User;
 import oi.github.dev.jakki.socialfollia.domain.service.UserService;
-import oi.github.dev.jakki.socialfollia.presentation.rest.dto.ResponseError;
 import oi.github.dev.jakki.socialfollia.presentation.rest.dto.UserDTO;
 import oi.github.dev.jakki.socialfollia.presentation.rest.mapper.UserMapper;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -25,10 +21,9 @@ public class UserResource {
 
     private final UserService service;
     private final UserMapper mapper;
-    private final Validator validator;
 
     @POST
-    public Response create(UserDTO dto) {
+    public Response create(@Valid UserDTO dto) {
         User user = mapper.toEntity(dto);
 
         service.create(user);
@@ -61,19 +56,7 @@ public class UserResource {
     @PUT
     @Path("{id}")
     public Response update(@PathParam("id") Long id, UserDTO dto) {
-        Optional<User> userOptional = service.findById(id);
-
-        if (userOptional.isEmpty()) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        User user = userOptional.get();
-
-        user.setName(dto.name());
-        user.setAge(dto.age());
-
-        // Não precisa, pois como tem a annotation @Transactional, ele commit tudo ao final do função
-
+        service.update(id, dto);
         return Response.noContent().build();
     }
 
