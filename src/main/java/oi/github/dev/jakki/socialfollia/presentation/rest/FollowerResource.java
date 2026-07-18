@@ -1,23 +1,19 @@
 package oi.github.dev.jakki.socialfollia.presentation.rest;
 
-import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import oi.github.dev.jakki.socialfollia.domain.exception.ConflictException;
 import oi.github.dev.jakki.socialfollia.domain.exception.NotFoundException;
 import oi.github.dev.jakki.socialfollia.domain.model.Follower;
 import oi.github.dev.jakki.socialfollia.domain.model.User;
 import oi.github.dev.jakki.socialfollia.domain.service.FollowerService;
 import oi.github.dev.jakki.socialfollia.domain.service.UserService;
-import oi.github.dev.jakki.socialfollia.presentation.rest.dto.FollowUserRequestDTO;
 import oi.github.dev.jakki.socialfollia.presentation.rest.mapper.FollowerMapper;
 
 import java.util.Optional;
 
-@Slf4j
 @Path("users/{userId}/followers")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,16 +25,17 @@ public class FollowerResource {
     private final FollowerMapper mapper;
 
     @PUT
+    @Path("{followerId}")
     public Response follow(
             @PathParam("userId") Long userId,
-            @Valid FollowUserRequestDTO dto
+            @PathParam("followerId") Long followerId
     ) {
-        if (userId.equals(dto.followerId())) {
+        if (userId.equals(followerId)) {
             throw new ConflictException("Você não pode seguir a sí mesmo.");
         }
 
         Optional<User> userOptional = userService.findById(userId);
-        Optional<User> followerOptional = userService.findById(dto.followerId());
+        Optional<User> followerOptional = userService.findById(followerId);
 
         if (userOptional.isEmpty()) {
             throw new NotFoundException("Usuário não encontrado.");
@@ -49,7 +46,7 @@ public class FollowerResource {
         }
 
         Optional<Follower> isFollower = followerService.findByFollowerIdAndUserId(
-                dto.followerId(),
+                followerOptional.get().getId(),
                 userOptional.get().getId()
         );
 
@@ -63,6 +60,11 @@ public class FollowerResource {
 
         followerService.followerUser(follower);
 
+        return Response.status(Response.Status.OK).build();
+    }
+
+    @GET
+    public Response listFollowersPerUser(@PathParam("userId") Long userId) {
         return Response.status(Response.Status.OK).build();
     }
 

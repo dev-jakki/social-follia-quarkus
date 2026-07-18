@@ -6,9 +6,10 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import oi.github.dev.jakki.socialfollia.domain.exception.NotFoundException;
 import oi.github.dev.jakki.socialfollia.domain.model.User;
 import oi.github.dev.jakki.socialfollia.domain.service.UserService;
-import oi.github.dev.jakki.socialfollia.presentation.rest.dto.UserDTO;
+import oi.github.dev.jakki.socialfollia.presentation.rest.dto.CreateUserRequestDTO;
 import oi.github.dev.jakki.socialfollia.presentation.rest.mapper.UserMapper;
 
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class UserResource {
     private final UserMapper mapper;
 
     @POST
-    public Response create(@Valid UserDTO dto) {
+    public Response create(@Valid CreateUserRequestDTO dto) {
         User user = mapper.toEntity(dto);
 
         service.create(user);
@@ -46,7 +47,7 @@ public class UserResource {
         Optional<User> userOptional = service.findById(id);
 
         if (userOptional.isEmpty()) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new NotFoundException("Usuário não encontrado.");
         }
 
         service.deleteById(userOptional.get().getId());
@@ -55,7 +56,7 @@ public class UserResource {
 
     @PUT
     @Path("{id}")
-    public Response update(@PathParam("id") Long id, UserDTO dto) {
+    public Response update(@PathParam("id") Long id, CreateUserRequestDTO dto) {
         service.update(id, dto);
         return Response.noContent().build();
     }

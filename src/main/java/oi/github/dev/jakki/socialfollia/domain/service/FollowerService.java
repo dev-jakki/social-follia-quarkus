@@ -20,10 +20,6 @@ public class FollowerService {
         repository.persist(follower);
     }
 
-    public Optional<Follower> findById(Long id) {
-        return repository.findByIdOptional(id);
-    }
-
     public Optional<Follower> findByFollowerIdAndUserId(Long followerId, Long userId) {
         return repository.findByFollowerIdAndUserId(followerId, userId);
     }

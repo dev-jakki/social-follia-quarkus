@@ -3,9 +3,7 @@ package oi.github.dev.jakki.socialfollia.presentation.rest.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record UserDTO(
-        Long id,
-
+public record CreateUserRequestDTO(
         @NotBlank(message = "Field is required")
         String name,
 

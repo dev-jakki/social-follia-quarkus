@@ -3,12 +3,11 @@ package oi.github.dev.jakki.socialfollia.domain.service;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import oi.github.dev.jakki.socialfollia.domain.exception.NotFoundException;
 import oi.github.dev.jakki.socialfollia.domain.model.User;
 import oi.github.dev.jakki.socialfollia.domain.repository.UserRepository;
-import oi.github.dev.jakki.socialfollia.presentation.rest.dto.UserDTO;
+import oi.github.dev.jakki.socialfollia.presentation.rest.dto.CreateUserRequestDTO;
 
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ public class UserService {
     }
 
     @Transactional
-    public void update(Long id, UserDTO dto) {
+    public void update(Long id, CreateUserRequestDTO dto) {
         Optional<User> userOptional = repository.findByIdOptional(id);
 
         if (userOptional.isEmpty()) {
