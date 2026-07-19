@@ -1,4 +1,4 @@
-package oi.github.dev.jakki.socialfollia.presentation.rest.dto;
+package oi.github.dev.jakki.socialfollia.presentation.rest.follower.dto;
 
 import jakarta.validation.constraints.NotNull;
 

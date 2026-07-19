@@ -1,4 +1,4 @@
-package oi.github.dev.jakki.socialfollia.presentation.rest;
+package oi.github.dev.jakki.socialfollia.presentation.rest.user;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.validation.Valid;
@@ -9,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 import oi.github.dev.jakki.socialfollia.domain.exception.NotFoundException;
 import oi.github.dev.jakki.socialfollia.domain.model.User;
 import oi.github.dev.jakki.socialfollia.domain.service.UserService;
-import oi.github.dev.jakki.socialfollia.presentation.rest.dto.CreateUserRequestDTO;
-import oi.github.dev.jakki.socialfollia.presentation.rest.mapper.UserMapper;
+import oi.github.dev.jakki.socialfollia.presentation.rest.user.dto.UserCreateRequestDTO;
 
 import java.util.Optional;
 
@@ -24,7 +23,7 @@ public class UserResource {
     private final UserMapper mapper;
 
     @POST
-    public Response create(@Valid CreateUserRequestDTO dto) {
+    public Response create(@Valid UserCreateRequestDTO dto) {
         User user = mapper.toEntity(dto);
 
         service.create(user);
@@ -44,19 +43,17 @@ public class UserResource {
     @DELETE
     @Path("{id}")
     public Response delete(@PathParam("id") Long id) {
-        Optional<User> userOptional = service.findById(id);
+        User user = service
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
 
-        if (userOptional.isEmpty()) {
-            throw new NotFoundException("Usuário não encontrado.");
-        }
-
-        service.deleteById(userOptional.get().getId());
+        service.deleteById(user.getId());
         return Response.noContent().build();
     }
 
     @PUT
     @Path("{id}")
-    public Response update(@PathParam("id") Long id, CreateUserRequestDTO dto) {
+    public Response update(@PathParam("id") Long id, UserCreateRequestDTO dto) {
         service.update(id, dto);
         return Response.noContent().build();
     }

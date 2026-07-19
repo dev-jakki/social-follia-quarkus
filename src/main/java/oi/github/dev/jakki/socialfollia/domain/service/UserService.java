@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import oi.github.dev.jakki.socialfollia.domain.exception.NotFoundException;
 import oi.github.dev.jakki.socialfollia.domain.model.User;
 import oi.github.dev.jakki.socialfollia.domain.repository.UserRepository;
-import oi.github.dev.jakki.socialfollia.presentation.rest.dto.CreateUserRequestDTO;
+import oi.github.dev.jakki.socialfollia.presentation.rest.user.dto.UserCreateRequestDTO;
 
 import java.util.Optional;
 
@@ -36,7 +36,7 @@ public class UserService {
     }
 
     @Transactional
-    public void update(Long id, CreateUserRequestDTO dto) {
+    public void update(Long id, UserCreateRequestDTO dto) {
         Optional<User> userOptional = repository.findByIdOptional(id);
 
         if (userOptional.isEmpty()) {
