@@ -31,7 +31,11 @@ public class PostResource {
 
     @POST
     public Response create(@PathParam("userId") Long userId, @Valid PostCreateRequestDTO dto) {
-        Post post = mapper.toEntity(dto, userId);
+        User user = userService
+                .findById(userId)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
+
+        Post post = mapper.toEntity(dto, user.getId());
 
         postService.create(post);
 

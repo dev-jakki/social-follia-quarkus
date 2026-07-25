@@ -47,10 +47,9 @@ public class FollowerResource {
     }
 
     @PUT
-    @Path("{followerId}")
     public Response follow(
             @PathParam("userId") Long userId,
-            @PathParam("followerId") Long followerId
+            @HeaderParam("followerId") Long followerId
     ) {
         ValidatedRelationship relationship = validateAndGetUsers(userId, followerId);
 
@@ -93,10 +92,9 @@ public class FollowerResource {
     }
 
     @DELETE
-    @Path("{followerId}")
     public Response unfollow(
             @PathParam("userId") Long userId,
-            @PathParam("followerId") Long followerId
+            @HeaderParam("followerId") Long followerId
     ) {
         ValidatedRelationship relationship = validateAndGetUsers(userId, followerId);
 
